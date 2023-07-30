@@ -1,0 +1,178 @@
+{{cloze:Text}}
+
+<script>
+// User Settings
+var userSettings = {
+    invertGestures: false,  // Set to 'true' to invert the gestures
+    swipeThreshold: 50,    // Adjust this value to change the swipe sensitivity
+    scrollDuration: 500,   // Scroll duration in milliseconds
+    revealNextKeys: ["KeyW", "Numpad0"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
+    hideLastKeys: ["KeyQ", "ArrowRight"] // Keys to hide the last cloze
+};
+
+function isElementInViewport(el) {
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+}
+
+var touchStartX = 0;
+
+function touchHandler(e) {
+  if (e.type === "touchstart") {
+    touchStartX = e.touches[0].clientX;
+  } else if (e.type === "touchend") {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchDeltaX = touchStartX - touchEndX;
+
+    if (touchDeltaX > userSettings.swipeThreshold) {
+      userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
+    } else if (touchDeltaX < -userSettings.swipeThreshold) {
+      userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
+    }
+  }
+}
+
+if ("ontouchstart" in window) {
+  window.addEventListener("touchstart", touchHandler);
+  window.addEventListener("touchend", touchHandler);
+}
+
+var elements;
+var clozes;
+var revealed = [];
+var originalClozeHTML = [];
+
+if (typeof AnkiDroidJS !== "undefined") {
+    // Required for rendering MathJax, only on AnkiDroid
+    function replaceMathJax(mathjaxString){
+        return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
+    }
+}
+
+function revealCloze(i) {
+  if (!revealed[i]) {
+    originalClozeHTML[i] = elements[i].innerHTML;
+    elements[i].innerHTML = clozes[i];
+    revealed[i] = true;
+
+    // Render MathJax
+    MathJax.typesetPromise([elements[i]]);
+
+    const allClozesRevealed = revealed.every((el) => el);
+    if (allClozesRevealed) {
+      flipToBack();
+    }
+  }
+}
+
+function revealNextCloze() {
+  const firstUnrevealed = revealed.findIndex((el) => !el);
+  if (firstUnrevealed != -1) {
+    if (!isElementInViewport(elements[firstUnrevealed])) {
+      smoothScrollTo(elements[firstUnrevealed]);
+    } else {
+      revealCloze(firstUnrevealed);
+    }
+  }
+}
+
+function hideLastCloze() {
+  let i = revealed.lastIndexOf(true);
+  if (i !== -1) {
+    if (!isElementInViewport(elements[i])) {
+      smoothScrollTo(elements[i]);
+    } else {
+      elements[i].innerHTML = originalClozeHTML[i];
+      revealed[i] = false;
+    }
+  }
+}
+
+function smoothScrollTo(element) {
+  const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
+  const startTime = performance.now();
+  const duration = userSettings.scrollDuration;
+
+  function animateScroll(currentTime) {
+    const elapsedTime = currentTime - startTime;
+    const easing = easeInOutQuad(elapsedTime, 0, 1, duration);
+
+    window.scrollTo(0, (1 - easing) * window.pageYOffset + easing * yOffset);
+
+    if (elapsedTime < duration) {
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  function easeInOutQuad(t, b, c, d) {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+  }
+
+  requestAnimationFrame(animateScroll);
+}
+
+// flipToBack reference to https://github.com/git9527/anki-awesome-select
+function flipToBack() {
+  if (typeof pycmd !== "undefined") {
+    pycmd("ans")
+  } else if (typeof study !== "undefined") {
+    study.drawAnswer()
+  } else if (typeof AnkiDroidJS !== "undefined") {
+    showAnswer()
+  } else if (window.anki && window.sendMessage2) {
+    window.sendMessage2("ankitap", "midCenter")
+  }
+  console.log("flipToBack");
+}
+
+function initialize() {
+  elements = document.querySelectorAll(".cloze");
+  clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
+
+  if (clozes.length != elements.length) {
+    console.error("Inconsistent count of clozes found in original note text and in the card!");
+    return;
+  }
+
+  elements.forEach((el, i) => {
+    el.addEventListener("click", (e) => {
+      revealCloze(i);
+    });
+  });
+
+  revealed.length = elements.length;
+  revealed.fill(false);
+  originalClozeHTML.length = elements.length;
+  originalClozeHTML.fill("");
+}
+
+if (typeof onUpdateHook !== "undefined") {
+  onUpdateHook.push(initialize);
+} else {
+  initialize();
+}
+
+document.addEventListener("keydown", handleKeyboardShortcuts, false);
+
+function handleKeyboardShortcuts(event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+
+  if(userSettings.revealNextKeys.includes(event.code)) {
+    event.preventDefault();
+    revealNextCloze();
+  } else if(userSettings.hideLastKeys.includes(event.code)) {
+    event.preventDefault();
+    hideLastCloze();
+  }
+}
+</script>
