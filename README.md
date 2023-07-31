@@ -17,13 +17,20 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 
 ## Configuration
 
-You can customize the script's behavior by changing the user settings at the top of the script. Here are the available options:
+You can customize the script's behavior by modifying the user settings at the top of the script. Here are the available options:
 
 - `invertGestures`: Inverts the touch gestures.
-- `swipeThreshold`: Adjusts the swipe gesture sensitivity.
+- `swipeThreshold`: Adjusts the swipe sensitivity.
 - `scrollDuration`: Adjusts the smooth scroll duration.
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last cloze.
+
+For AnkiDroid users, to ensure compatibility with this script, follow these steps:
+
+1. Open AnkiDroid.
+2. Go to 'Settings'.
+3. Navigate to 'Advanced'.
+4. Under the 'Experimental' section, enable 'Use the new backend'.
 
 ## Compatibility
 
