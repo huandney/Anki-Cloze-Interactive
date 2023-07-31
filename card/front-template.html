@@ -65,8 +65,11 @@ function revealCloze(i) {
     // Add the class 'revealed' to the element
     elements[i].classList.add('revealed');
 
+    // MathJax will only run if it is defined, to avoid errors in AnkiWeb
     // Render MathJax
-    MathJax.typesetPromise([elements[i]]);
+    if (typeof MathJax !== "undefined") {
+        MathJax.typesetPromise([elements[i]]);
+    }
 
     const allClozesRevealed = revealed.every((el) => el);
     if (allClozesRevealed) {
