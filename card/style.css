@@ -9,6 +9,9 @@
     font-weight: bold;
     color: #7f0101;
 }
+.cloze.revealed {
+    cursor: default;
+}
 .nightMode .cloze {
     color: #ffcccb;
 }
