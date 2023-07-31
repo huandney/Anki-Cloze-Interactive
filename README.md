@@ -25,6 +25,16 @@ You can customize the script's behavior by changing the user settings at the top
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last cloze.
 
+## Compatibility
+
+This script is compatible with:
+
+- Anki Desktop: version 2.1.55 or higher.
+- AnkiDroid: version 2.16.2 or higher (requires experimental backend feature enabled).
+- AnkiWeb: compatible, but without support for MathJax due to platform limitations.
+
+Compatibility with AnkiMobile has not been tested yet. Feedback from AnkiMobile users is welcome!
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0.
