@@ -8,6 +8,7 @@
 .cloze {
     font-weight: bold;
     color: #7f0101;
+    cursor: pointer;
 }
 .cloze.revealed {
     cursor: default;
