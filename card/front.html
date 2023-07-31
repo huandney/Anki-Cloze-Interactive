@@ -62,6 +62,9 @@ function revealCloze(i) {
     elements[i].innerHTML = clozes[i];
     revealed[i] = true;
 
+    // Add the class 'revealed' to the element
+    elements[i].classList.add('revealed');
+
     // Render MathJax
     MathJax.typesetPromise([elements[i]]);
 
@@ -91,6 +94,9 @@ function hideLastCloze() {
     } else {
       elements[i].innerHTML = originalClozeHTML[i];
       revealed[i] = false;
+
+      // Remove the 'revealed' class from the element
+      elements[i].classList.remove('revealed');
     }
   }
 }
