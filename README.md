@@ -28,9 +28,9 @@ You can customize the script's behavior by modifying the user settings at the to
 For AnkiDroid users, to ensure compatibility with this script, follow these steps:
 
 1. Open AnkiDroid.
-2. Go to 'Settings'.
-3. Navigate to 'Advanced'.
-4. Under the 'Experimental' section, enable 'Use the new backend'.
+2. Go to **Settings**.
+3. Navigate to **Advanced**.
+4. Under the **Experimental** section, enable **Use the new backend**.
 
 ## Compatibility
 
