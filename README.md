@@ -10,7 +10,7 @@ There are two ways to install the Cloze Interactive script:
 
 ### Option 1: Import the Deck
 
-1. Download the `.apkg` file from the [releases page](https://github.com/huandney/Anki-Cloze-Interactive/releases) on GitHub or from [AnkiWeb](https://ankiweb.net/shared/info/294726132).
+1. Download the `.apkg` file from the [releases page](https://github.com/huandney/Anki-Cloze-Interactive/releases) on GitHub or from [AnkiWeb](https://ankiweb.net/shared/info/1523903214).
 2. After the file is downloaded, double-click on it to open it in the desktop program. If asked which application to use, choose Anki.
 3. The deck should now be imported into your Anki app.
 
