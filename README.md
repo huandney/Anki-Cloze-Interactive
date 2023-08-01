@@ -42,6 +42,12 @@ This script is compatible with:
 
 Compatibility with AnkiMobile has not been tested yet. Feedback from AnkiMobile users is welcome!
 
+If you are using a version of Anki prior to 2.1.55, I recommend the [ClozeAdv](https://github.com/ruin1990/AnkiTemplate/tree/main/ClozeAdv) script by ruin1990, which offers similar functionalities.
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0.
+
+## Acknowledgements
+
+This script was inspired by the work of [ruin1990](https://github.com/ruin1990), [kleinerpirat](https://github.com/kleinerpirat), and [thiswillbeyourgithub](https://github.com/thiswillbeyourgithub). I would like to express my gratitude to all of them for their valuable contributions to the Anki community. In particular, the [Clozolkor](https://github.com/thiswillbeyourgithub/Clozolkor) script was a useful resource during the development of this script.
