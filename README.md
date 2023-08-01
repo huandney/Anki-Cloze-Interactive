@@ -6,9 +6,11 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 
 ## Installation
 
-1. Download the script from this repository.
-2. Open Anki and go to the card templates management section.
-3. Add the script to the scripts section of your card template.
+1. Download the `.apkg` file from the [releases page](https://github.com/huandney/Anki-Cloze-Interactive/releases) on GitHub.
+2. After the file is downloaded, double-click on it to open it in the desktop program. If you're asked what app to use, choose Anki.
+3. The deck should now be imported into your Anki app.
+
+Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
 
 ## Usage
 
