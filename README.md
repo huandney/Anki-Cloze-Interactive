@@ -56,4 +56,4 @@ This script was inspired by the work of [ruin1990](https://github.com/ruin1990) 
 
 ### Functionality Reference
 
-Special thanks to [git9527](https://github.com/git9527) for the 'flip to back' functionality reference.
+Thanks to [git9527](https://github.com/git9527) for the 'flip to back' functionality reference.
