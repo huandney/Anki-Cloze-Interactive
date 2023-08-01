@@ -51,7 +51,7 @@ You can customize the script's behavior by modifying the user settings at the to
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last cloze.
 
-:warning:To ensure compatibility with **AnkiDroid**, follow these steps:
+:warning: To ensure compatibility with **AnkiDroid**, follow these steps:
 
 1. Open AnkiDroid.
 2. Go to **Settings**.
