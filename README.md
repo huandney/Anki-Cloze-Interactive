@@ -50,4 +50,4 @@ This project is licensed under the GNU General Public License v3.0.
 
 ## Acknowledgements
 
-This script was inspired by the work of [ruin1990](https://github.com/ruin1990), [kleinerpirat](https://github.com/kleinerpirat), and [thiswillbeyourgithub](https://github.com/thiswillbeyourgithub). I would like to express my gratitude to all of them for their valuable contributions to the Anki community. In particular, the [Clozolkor](https://github.com/thiswillbeyourgithub/Clozolkor) script was a useful resource during the development of this script.
+This script was inspired by the work of [ruin1990](https://github.com/ruin1990) and [kleinerpirat](https://github.com/kleinerpirat). I would like to express my gratitude to both of them for their valuable contributions to the Anki community. I also want to acknowledge [thiswillbeyourgithub](https://github.com/thiswillbeyourgithub) for creating the [Clozolkor](https://github.com/thiswillbeyourgithub/Clozolkor) script, which I used extensively before developing this script.
