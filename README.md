@@ -12,8 +12,11 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 
 ## Usage
 
-- Tap or click on a cloze to reveal it.
-- Use the configured keyboard shortcuts to reveal the next cloze or hide the last revealed cloze.
+- Click a cloze to reveal it.
+- On touchscreen devices, tap a cloze to open it or use swipe gestures (right to reveal, left to hide).
+- Use keyboard shortcuts to reveal or hide clozes. Default keys: `W` or `→` for the next cloze, and `Q` or `←` to hide a cloze.
+
+Both gestures and keyboard shortcuts can be customized in the script's user settings.
 
 ## Configuration
 
