@@ -4,6 +4,15 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 
 ![Demonstration of Cloze Interactive](https://github.com/huandney/Anki-Cloze-Interactive/assets/19948348/5c64a125-97ef-4ae8-9855-327765ccc5c6)
 
+## Features
+
+- **Individual Cloze Reveal:** No more revealing all clozes at once!
+- **Touch Gestures:** Swipe gestures are supported on touchscreen devices.
+- **Keyboard Shortcuts:** Use keyboard shortcuts to reveal or hide clozes.
+- **Auto Scroll:** Enhance your reading experience with a smooth auto scroll to the next cloze.
+- **Flip to Back:** The card is automatically flipped after revealing all the clozes.
+- **MathJax Support:** Include complex mathematical equations in your clozes with MathJax rendering.
+
 ## Installation
 
 There are two ways to install the Cloze Interactive script:
