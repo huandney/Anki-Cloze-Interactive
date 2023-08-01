@@ -36,11 +36,11 @@ For AnkiDroid users, to ensure compatibility with this script, follow these step
 
 This script is compatible with:
 
-- Anki Desktop: version 2.1.55 or higher.
-- AnkiDroid: version 2.16.2 or higher (requires experimental backend feature enabled).
-- AnkiWeb: compatible, but without support for MathJax due to platform limitations.
+- **Anki Desktop**: version 2.1.55 or higher.
+- **AnkiDroid**: version 2.16.2 or higher (requires experimental backend feature enabled).
+- **AnkiWeb**: compatible, but without support for MathJax due to platform limitations.
 
-Compatibility with AnkiMobile has not been tested yet. Feedback from AnkiMobile users is welcome!
+Compatibility with **AnkiMobile** has not been tested yet. Feedback from AnkiMobile users is welcome!
 
 If you are using a version of Anki prior to 2.1.55, I recommend the [ClozeAdv](https://github.com/ruin1990/AnkiTemplate/tree/main/ClozeAdv) script by ruin1990, which offers similar functionalities.
 
