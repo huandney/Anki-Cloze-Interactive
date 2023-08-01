@@ -6,9 +6,21 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 
 ## Installation
 
-1. Download the `.apkg` file from the [releases page](https://github.com/huandney/Anki-Cloze-Interactive/releases) on GitHub.
-2. After the file is downloaded, double-click on it to open it in the desktop program. If you're asked what app to use, choose Anki.
+There are two ways to install the Cloze Interactive script:
+
+### Option 1: Import the Deck
+
+1. Download the `.apkg` file from the [releases page](https://github.com/huandney/Anki-Cloze-Interactive/releases) on GitHub or from [AnkiWeb](https://ankiweb.net/shared/info/190526087).
+2. After the file is downloaded, double-click on it to open it in the desktop program. If asked which application to use, choose Anki.
 3. The deck should now be imported into your Anki app.
+
+### Option 2: Manual Installation
+
+1. Navigate to the [card folder](https://github.com/huandney/Anki-Cloze-Interactive/tree/main/card) in the GitHub repository.
+2. Copy the contents of the `template-front.html` file.
+3. Open your Anki Desktop app. In the main Anki window, go to **Tools → Manage Note Types** and find the Cloze note type where you want to enable the Cloze Interactive script. Proceed by clicking on **Cards** to invoke the card template editor.
+4. Replace your existing front template with the copied content.
+5. Repeat the process for the `template-styling.css` file, replacing your existing styling.
 
 Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
 
