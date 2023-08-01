@@ -50,4 +50,10 @@ This project is licensed under the GNU General Public License v3.0.
 
 ## Acknowledgements
 
-This script was inspired by the work of [ruin1990](https://github.com/ruin1990) and [kleinerpirat](https://github.com/kleinerpirat). I would like to express my gratitude to both of them for their valuable contributions to the Anki community. I also want to acknowledge [thiswillbeyourgithub](https://github.com/thiswillbeyourgithub) for creating the [Clozolkor](https://github.com/thiswillbeyourgithub/Clozolkor) script, which I used extensively before developing this script.
+### Inspiration
+
+This script was inspired by the work of [ruin1990](https://github.com/ruin1990) and [kleinerpirat](https://github.com/kleinerpirat). For more details on their contributions, you can visit this [AnkiWeb forum discussion](https://forums.ankiweb.net/t/cloze-one-by-one-uncovering/12584). I also want to acknowledge [thiswillbeyourgithub](https://github.com/thiswillbeyourgithub) for creating the [Clozolkor](https://github.com/thiswillbeyourgithub/Clozolkor) script, which I used before developing this script.
+
+### Functionality Reference
+
+Special thanks to [git9527](https://github.com/git9527) for the 'flip to back' functionality reference.
