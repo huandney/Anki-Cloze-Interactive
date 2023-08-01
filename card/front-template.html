@@ -1,6 +1,6 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.0.0">
+<script data-name="Cloze Interactive" data-version="v1.1.0">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
@@ -48,6 +48,7 @@ var elements;
 var clozes;
 var revealed = [];
 var originalClozeHTML = [];
+var revealOrder = [];
 
 if (typeof AnkiDroidJS !== "undefined") {
     // Required for rendering MathJax, only on AnkiDroid
@@ -64,6 +65,9 @@ function revealCloze(i) {
 
     // Add the class 'revealed' to the element
     elements[i].classList.add('revealed');
+
+    // Add the index to revealOrder
+    revealOrder.push(i);
 
     // MathJax will only run if it is defined, to avoid errors in AnkiWeb
     // Render MathJax
@@ -90,16 +94,19 @@ function revealNextCloze() {
 }
 
 function hideLastCloze() {
-  let i = revealed.lastIndexOf(true);
+  let i = revealOrder.length - 1;
   if (i !== -1) {
-    if (!isElementInViewport(elements[i])) {
-      smoothScrollTo(elements[i]);
+    if (!isElementInViewport(elements[revealOrder[i]])) {
+      smoothScrollTo(elements[revealOrder[i]]);
     } else {
-      elements[i].innerHTML = originalClozeHTML[i];
-      revealed[i] = false;
+      elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
+      revealed[revealOrder[i]] = false;
 
       // Remove the 'revealed' class from the element
-      elements[i].classList.remove('revealed');
+      elements[revealOrder[i]].classList.remove('revealed');
+
+      // Remove the last element from revealOrder
+      revealOrder.pop();
     }
   }
 }
