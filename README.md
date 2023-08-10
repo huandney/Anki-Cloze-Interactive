@@ -29,7 +29,7 @@ There are two ways to install the Cloze Interactive script:
 2. Copy the contents of the `template-front.html` file.
 3. Open your Anki Desktop app. In the main Anki window, go to **Tools → Manage Note Types** and find the Cloze note type where you want to enable the Cloze Interactive script. Proceed by clicking on **Cards** to invoke the card template editor.
 4. Replace your existing front template with the copied content.
-5. Repeat the process for the `template-styling.css` file, replacing your existing styling.
+5. Repeat the process for the `styling.css` file, replacing your existing styling.
 
 Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
 
