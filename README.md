@@ -31,7 +31,7 @@ There are two ways to install the Cloze Interactive script:
 4. Replace your existing front template with the copied content.
 5. Repeat the process for the `styling.css` file, replacing your existing styling.
 
-Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
+> Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
 
 ## Usage
 
@@ -39,7 +39,7 @@ Please note that these instructions are for the Anki Desktop app. The process ma
 - On touchscreen devices, tap a cloze to open it or use swipe gestures (right to reveal, left to hide).
 - Use keyboard shortcuts to reveal or hide clozes. Default keys: `W` or `→` for the next cloze, and `Q` or `←` to hide a cloze.
 
-Both gestures and keyboard shortcuts can be customized in the script's user settings.
+> Both gestures and keyboard shortcuts can be customized in the script's user settings.
 
 ## Configuration
 
@@ -66,9 +66,7 @@ This script is compatible with:
 - **AnkiDroid**: version 2.16.2 or higher (requires experimental backend feature enabled).
 - **AnkiWeb**: compatible, but without support for MathJax due to platform limitations.
 
-Compatibility with **AnkiMobile** has not been tested yet. Feedback from AnkiMobile users is welcome!
-
-If you are using a version of Anki prior to 2.1.55, I recommend the [ClozeAdv](https://github.com/ruin1990/AnkiTemplate/tree/main/ClozeAdv) script by ruin1990, which offers similar functionalities.
+> Compatibility with **AnkiMobile** has not been tested yet. Feedback from AnkiMobile users is welcome!
 
 ## License
 
