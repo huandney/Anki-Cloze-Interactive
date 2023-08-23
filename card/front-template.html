@@ -1,6 +1,6 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.1.0">
+<script data-name="Cloze Interactive" data-version="v1.1.1">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
@@ -137,16 +137,20 @@ function smoothScrollTo(element) {
   requestAnimationFrame(animateScroll);
 }
 
-// flipToBack reference to https://github.com/git9527/anki-awesome-select
 function flipToBack() {
   if (typeof pycmd !== "undefined") {
-    pycmd("ans")
+    pycmd("ans");
   } else if (typeof study !== "undefined") {
-    study.drawAnswer()
+    study.drawAnswer();
   } else if (typeof AnkiDroidJS !== "undefined") {
-    showAnswer()
+    showAnswer();
   } else if (window.anki && window.sendMessage2) {
-    window.sendMessage2("ankitap", "midCenter")
+    window.sendMessage2("ankitap", "midCenter");
+  } else { // Added to work on the new AnkiWeb
+    const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
+    if (showAnswerButton) {
+      showAnswerButton.click();
+    }
   }
   console.log("flipToBack");
 }
