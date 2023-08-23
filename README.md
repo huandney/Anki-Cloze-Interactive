@@ -64,7 +64,7 @@ This script is compatible with:
 
 - **Anki Desktop**: version 2.1.55 or higher.
 - **AnkiDroid**: version 2.16.2 or higher (requires experimental backend feature enabled).
-- **AnkiWeb**: compatible, but without support for MathJax due to platform limitations.
+- **AnkiWeb**: compatible.
 
 > Compatibility with **AnkiMobile** has not been tested yet. Feedback from AnkiMobile users is welcome!
 
