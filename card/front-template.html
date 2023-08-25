@@ -1,6 +1,6 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.1.1">
+<script data-name="Cloze Interactive" data-version="v1.2.0">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
@@ -12,36 +12,56 @@ var userSettings = {
     hideLastKeys: ["KeyQ", "ArrowLeft"]     // Keys to hide the last cloze
 };
 
+// Calculates heights of 'fixed'/'sticky' elements (useful for pages like AnkiWeb with header/footer)
+function getOverlayHeights() {
+    const heights = {
+        top: 0,
+        bottom: 0
+    };
+
+    document.querySelectorAll('*').forEach(el => {
+        const style = window.getComputedStyle(el);
+        if (style.position === 'fixed' || style.position === 'sticky') {
+            const position = parseFloat(style.top) === 0 ? 'top' : 'bottom';
+            heights[position] += el.offsetHeight;
+        }
+    });
+
+    return heights;
+}
+
 function isElementInViewport(el) {
-  const rect = el.getBoundingClientRect();
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
+    const rect = el.getBoundingClientRect();
+    const overlayHeights = getOverlayHeights(); // Considers heights of 'fixed'/'sticky' elements
+
+    return (
+        rect.left >= 0 &&
+        rect.right <= window.innerWidth &&
+        rect.bottom <= (window.innerHeight - overlayHeights.bottom) &&
+        rect.top >= overlayHeights.top
+    );
 }
 
 var touchStartX = 0;
 
 function touchHandler(e) {
-  if (e.type === "touchstart") {
-    touchStartX = e.touches[0].clientX;
-  } else if (e.type === "touchend") {
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchDeltaX = touchStartX - touchEndX;
+    if (e.type === "touchstart") {
+        touchStartX = e.touches[0].clientX;
+    } else if (e.type === "touchend") {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchDeltaX = touchStartX - touchEndX;
 
-    if (touchDeltaX > userSettings.swipeThreshold) {
-      userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
-    } else if (touchDeltaX < -userSettings.swipeThreshold) {
-      userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
+        if (touchDeltaX > userSettings.swipeThreshold) {
+            userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
+        } else if (touchDeltaX < -userSettings.swipeThreshold) {
+            userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
+        }
     }
-  }
 }
 
 if ("ontouchstart" in window) {
-  window.addEventListener("touchstart", touchHandler);
-  window.addEventListener("touchend", touchHandler);
+    window.addEventListener("touchstart", touchHandler);
+    window.addEventListener("touchend", touchHandler);
 }
 
 var elements;
@@ -52,149 +72,156 @@ var revealOrder = [];
 
 if (typeof AnkiDroidJS !== "undefined") {
     // Required for rendering MathJax, only on AnkiDroid
-    function replaceMathJax(mathjaxString){
+    function replaceMathJax(mathjaxString) {
         return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
     }
 }
 
 function revealCloze(i) {
-  if (!revealed[i]) {
-    originalClozeHTML[i] = elements[i].innerHTML;
-    elements[i].innerHTML = clozes[i];
-    revealed[i] = true;
+    if (!revealed[i]) {
+        originalClozeHTML[i] = elements[i].innerHTML;
+        elements[i].innerHTML = clozes[i];
+        revealed[i] = true;
 
-    // Add the class 'revealed' to the element
-    elements[i].classList.add('revealed');
+        // Add the class 'revealed' to the element
+        elements[i].classList.add('revealed');
 
-    // Add the index to revealOrder
-    revealOrder.push(i);
+        // Add the index to revealOrder
+        revealOrder.push(i);
 
-    // MathJax will only run if it is defined, to avoid errors in AnkiWeb
-    // Render MathJax
-    if (typeof MathJax !== "undefined") {
-        MathJax.typesetPromise([elements[i]]);
+        // MathJax will only run if it is defined, to avoid errors in AnkiWeb
+        // Render MathJax
+        if (typeof MathJax !== "undefined") {
+            MathJax.typesetPromise([elements[i]]);
+        }
+
+        const allClozesRevealed = revealed.every((el) => el);
+        if (allClozesRevealed) {
+            flipToBack();
+        }
     }
-
-    const allClozesRevealed = revealed.every((el) => el);
-    if (allClozesRevealed) {
-      flipToBack();
-    }
-  }
 }
 
 function revealNextCloze() {
-  const firstUnrevealed = revealed.findIndex((el) => !el);
-  if (firstUnrevealed != -1) {
-    if (!isElementInViewport(elements[firstUnrevealed])) {
-      smoothScrollTo(elements[firstUnrevealed]);
-    } else {
-      revealCloze(firstUnrevealed);
+    const firstUnrevealed = revealed.findIndex((el) => !el);
+    if (firstUnrevealed != -1) {
+        if (!isElementInViewport(elements[firstUnrevealed])) {
+            smoothScrollTo(elements[firstUnrevealed]);
+        } else {
+            revealCloze(firstUnrevealed);
+        }
     }
-  }
 }
 
 function hideLastCloze() {
-  let i = revealOrder.length - 1;
-  if (i !== -1) {
-    if (!isElementInViewport(elements[revealOrder[i]])) {
-      smoothScrollTo(elements[revealOrder[i]]);
-    } else {
-      elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
-      revealed[revealOrder[i]] = false;
+    let i = revealOrder.length - 1;
+    if (i !== -1) {
+        if (!isElementInViewport(elements[revealOrder[i]])) {
+            smoothScrollTo(elements[revealOrder[i]]);
+        } else {
+            elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
+            revealed[revealOrder[i]] = false;
 
-      // Remove the 'revealed' class from the element
-      elements[revealOrder[i]].classList.remove('revealed');
+            // Remove the 'revealed' class from the element
+            elements[revealOrder[i]].classList.remove('revealed');
 
-      // Remove the last element from revealOrder
-      revealOrder.pop();
+            // Remove the last element from revealOrder
+            revealOrder.pop();
+        }
     }
-  }
 }
 
 function smoothScrollTo(element) {
-  const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
-  const startTime = performance.now();
-  const duration = userSettings.scrollDuration;
+    const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
+    const startTime = performance.now();
+    const duration = userSettings.scrollDuration;
 
-  function animateScroll(currentTime) {
-    const elapsedTime = currentTime - startTime;
-    const easing = easeInOutQuad(elapsedTime, 0, 1, duration);
+    function animateScroll(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const easing = easeInOutQuad(elapsedTime, 0, 1, duration);
 
-    window.scrollTo(0, (1 - easing) * window.pageYOffset + easing * yOffset);
+        window.scrollTo(0, (1 - easing) * window.pageYOffset + easing * yOffset);
 
-    if (elapsedTime < duration) {
-      requestAnimationFrame(animateScroll);
+        if (elapsedTime < duration) {
+            requestAnimationFrame(animateScroll);
+        }
     }
-  }
 
-  function easeInOutQuad(t, b, c, d) {
-    t /= d / 2;
-    if (t < 1) return (c / 2) * t * t + b;
-    t--;
-    return (-c / 2) * (t * (t - 2) - 1) + b;
-  }
+    function easeInOutQuad(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return (c / 2) * t * t + b;
+        t--;
+        return (-c / 2) * (t * (t - 2) - 1) + b;
+    }
 
-  requestAnimationFrame(animateScroll);
+    requestAnimationFrame(animateScroll);
 }
 
 function flipToBack() {
-  if (typeof pycmd !== "undefined") {
-    pycmd("ans");
-  } else if (typeof study !== "undefined") {
-    study.drawAnswer();
-  } else if (typeof AnkiDroidJS !== "undefined") {
-    showAnswer();
-  } else if (window.anki && window.sendMessage2) {
-    window.sendMessage2("ankitap", "midCenter");
-  } else { // Added to work on the new AnkiWeb
-    const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
-    if (showAnswerButton) {
-      showAnswerButton.click();
+    // Remove all event listeners to prevent them from being triggered on the back side
+    document.removeEventListener("keydown", handleKeyboardShortcuts);
+    if ("ontouchstart" in window) {
+        window.removeEventListener("touchstart", touchHandler);
+        window.removeEventListener("touchend", touchHandler);
     }
-  }
-  console.log("flipToBack");
+
+    if (typeof pycmd !== "undefined") {
+        pycmd("ans");
+    } else if (typeof study !== "undefined") {
+        study.drawAnswer();
+    } else if (typeof AnkiDroidJS !== "undefined") {
+        showAnswer();
+    } else if (window.anki && window.sendMessage2) {
+        window.sendMessage2("ankitap", "midCenter");
+    } else { // Added to work on the new AnkiWeb
+        const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
+        if (showAnswerButton) {
+            showAnswerButton.click();
+        }
+    }
+    console.log("flipToBack");
 }
 
 function initialize() {
-  elements = document.querySelectorAll(".cloze");
-  clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
+    elements = document.querySelectorAll(".cloze");
+    clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
 
-  if (clozes.length != elements.length) {
-    console.error("Inconsistent count of clozes found in original note text and in the card!");
-    return;
-  }
+    if (clozes.length != elements.length) {
+        console.error("Inconsistent count of clozes found in original note text and in the card!");
+        return;
+    }
 
-  elements.forEach((el, i) => {
-    el.addEventListener("click", (e) => {
-      revealCloze(i);
+    elements.forEach((el, i) => {
+        el.addEventListener("click", (e) => {
+            revealCloze(i);
+        });
     });
-  });
 
-  revealed.length = elements.length;
-  revealed.fill(false);
-  originalClozeHTML.length = elements.length;
-  originalClozeHTML.fill("");
+    revealed.length = elements.length;
+    revealed.fill(false);
+    originalClozeHTML.length = elements.length;
+    originalClozeHTML.fill("");
 }
 
 if (typeof onUpdateHook !== "undefined") {
-  onUpdateHook.push(initialize);
+    onUpdateHook.push(initialize);
 } else {
-  initialize();
+    initialize();
 }
 
 document.addEventListener("keydown", handleKeyboardShortcuts, false);
 
 function handleKeyboardShortcuts(event) {
-  if (event.defaultPrevented) {
-    return;
-  }
+    if (event.defaultPrevented) {
+        return;
+    }
 
-  if(userSettings.revealNextKeys.includes(event.code)) {
-    event.preventDefault();
-    revealNextCloze();
-  } else if(userSettings.hideLastKeys.includes(event.code)) {
-    event.preventDefault();
-    hideLastCloze();
-  }
+    if (userSettings.revealNextKeys.includes(event.code)) {
+        event.preventDefault();
+        revealNextCloze();
+    } else if (userSettings.hideLastKeys.includes(event.code)) {
+        event.preventDefault();
+        hideLastCloze();
+    }
 }
 </script>
