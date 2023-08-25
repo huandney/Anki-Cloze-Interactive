@@ -83,8 +83,8 @@ function revealCloze(i) {
         elements[i].innerHTML = clozes[i];
         revealed[i] = true;
 
-        // Add the class 'revealed' to the element
-        elements[i].classList.add('revealed');
+        // Remove the 'interactive' class when the cloze is revealed
+        elements[i].classList.remove('interactive');
 
         // Add the index to revealOrder
         revealOrder.push(i);
@@ -122,8 +122,8 @@ function hideLastCloze() {
             elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
             revealed[revealOrder[i]] = false;
 
-            // Remove the 'revealed' class from the element
-            elements[revealOrder[i]].classList.remove('revealed');
+            // Add the 'interactive' class back to the element
+            elements[revealOrder[i]].classList.add('interactive');
 
             // Remove the last element from revealOrder
             revealOrder.pop();
@@ -192,6 +192,9 @@ function initialize() {
     }
 
     elements.forEach((el, i) => {
+        // Add the 'interactive' class to each cloze element during initialization
+        el.classList.add('interactive');
+
         el.addEventListener("click", (e) => {
             revealCloze(i);
         });
