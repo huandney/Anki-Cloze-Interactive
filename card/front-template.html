@@ -89,7 +89,7 @@ function revealCloze(i) {
         // Add the index to revealOrder
         revealOrder.push(i);
 
-        // MathJax will only run if it is defined, to avoid errors in AnkiWeb
+        // MathJax will only run if it is defined
         // Render MathJax
         if (typeof MathJax !== "undefined") {
             MathJax.typesetPromise([elements[i]]);
