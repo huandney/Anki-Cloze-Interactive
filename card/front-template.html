@@ -173,7 +173,7 @@ function flipToBack() {
         showAnswer();
     } else if (window.anki && window.sendMessage2) {
         window.sendMessage2("ankitap", "midCenter");
-    } else {
+    } else { // Added to work on the new AnkiWeb
         const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
         if (showAnswerButton) {
             showAnswerButton.click();
