@@ -158,6 +158,13 @@ function smoothScrollTo(element) {
 }
 
 function flipToBack() {
+    // Remove all event listeners to prevent them from being triggered on the back side
+    document.removeEventListener("keydown", handleKeyboardShortcuts);
+    if ("ontouchstart" in window) {
+        window.removeEventListener("touchstart", touchHandler);
+        window.removeEventListener("touchend", touchHandler);
+    }
+
     if (typeof pycmd !== "undefined") {
         pycmd("ans");
     } else if (typeof study !== "undefined") {
@@ -166,7 +173,7 @@ function flipToBack() {
         showAnswer();
     } else if (window.anki && window.sendMessage2) {
         window.sendMessage2("ankitap", "midCenter");
-    } else { // Added to work on the new AnkiWeb
+    } else {
         const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
         if (showAnswerButton) {
             showAnswerButton.click();
