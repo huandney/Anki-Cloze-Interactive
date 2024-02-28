@@ -23,7 +23,7 @@ a.cloze {
     cursor: default;
 }
 
-/* Prevent MathJax Editing on Front */
+/* Prevent MathJax Editing on Front Card */
 .cloze {
     position: relative;
     display: inline-block;
