@@ -5,13 +5,37 @@
     color: black;
     background-color: white;
 }
+
+/* Styles for Clozes */
 .cloze {
     font-weight: bold;
     color: #7f0101;
 }
-.cloze.interactive {
-    cursor: pointer;
-}
 .nightMode .cloze {
     color: #ffcccb;
+}
+a.cloze {
+    text-decoration: none;
+}
+
+/* Styles for Revealed Clozes */
+.cloze.revealed {
+    cursor: default;
+}
+
+/* Prevent MathJax Editing on Front */
+.cloze {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+a.cloze::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000; /* Ensures it stays above the content to capture clicks */
+    pointer-events: auto; /* Enables pointer events to capture clicks */
 }
