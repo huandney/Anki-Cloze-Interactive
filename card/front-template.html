@@ -5,7 +5,7 @@
 
 // User Settings
 var userSettings = {
-    gesturesEnabled: true,    // Set para "false" para desabilitar gestos no AnkiDesktop e AnkiWeb com telas sensíveis ao toque
+    gesturesEnabled: true,    // Set to "false" to disable gestures on AnkiDesktop and AnkiWeb with touch screens
     invertGestures: false,    // Set to "true" to invert the gestures
     swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
     scrollDuration: 500,      // Scroll duration in milliseconds
@@ -14,7 +14,7 @@ var userSettings = {
     hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
 };
 
-// Detecta onde o script está sendo executado
+// Detects where the script is being executed
 function detectAnkiPlatform() {
     if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
         return "AnkiMobile";
@@ -29,10 +29,10 @@ function detectAnkiPlatform() {
     }
 }
 
-// Atualiza a configuração de gestos, apenas para AnkiDesktop e AnkiWeb
+// Updates the gesture configuration, only for AnkiDesktop and AnkiWeb
 function updateGestureSetting() {
     var platform = detectAnkiPlatform();
-    // AnkiMobile e AnkiDroid são gerenciados por suas próprias configurações de app pelo User Action
+    // AnkiMobile and AnkiDroid are managed by their own app settings through User Action
     if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
         userSettings.gesturesEnabled = false;
     }
@@ -62,7 +62,7 @@ function getOverlayHeights() {
         bottom: 0
     };
 
-    // Captura e adiciona a altura de elementos fixos ou sticky
+    // Captures and adds the height of fixed or sticky elements
     document.querySelectorAll("*").forEach(el => {
         const style = window.getComputedStyle(el);
         if (style.position === "fixed" || style.position === "sticky") {
@@ -71,7 +71,7 @@ function getOverlayHeights() {
         }
     });
 
-    // Verifica e adiciona as alturas definidas pelas variáveis CSS apenas no AnkiMobile
+    // Checks and adds the heights defined by CSS variables only in AnkiMobile
     if (detectAnkiPlatform() === "AnkiMobile" && window.getComputedStyle) {
         const rootStyle = getComputedStyle(document.documentElement);
         const topInset = parseInt(rootStyle.getPropertyValue("--top-inset"), 10) || 0;
@@ -126,7 +126,7 @@ var revealed = [];
 var originalClozeHTML = [];
 var revealOrder = [];
 
-// Verifica se todos os clozes foram revelados
+// Checks if all clozes have been revealed
 function allClozesRevealed() {
     return revealed.every(el => el);
 }
@@ -165,8 +165,8 @@ function revealNextCloze() {
 
 function hideLastCloze() {
     if (allClozesRevealed()) {
-        console.log("Todos os clozes já estão revelados. Ação de esconder o último cloze não será executada.");
-        return; // Interrompe a execução da função se todos os clozes estão revelados
+        console.log("All clozes are already revealed. The action to hide the last cloze will not be executed.");
+        return; 
     }
     
     let i = revealOrder.length - 1;
@@ -214,9 +214,9 @@ function smoothScrollTo(element) {
 
 function flipToBack() {
     const platform = detectAnkiPlatform();
-    let shouldFlip = false; // Assume que não devemos virar a carta inicialmente
+    let shouldFlip = false; // Assumes we shouldn't flip the card initially
 
-    // Verifica a configuração de flipToBackEnabled
+    // Checks the flipToBackEnabled configuration
     if (userSettings.flipToBackEnabled === "all") {
         shouldFlip = true;
     } else if (userSettings.flipToBackEnabled === "off") {
@@ -225,7 +225,6 @@ function flipToBack() {
         shouldFlip = userSettings.flipToBackEnabled.includes(platform);
     }
 
-    // Função para executar a ação de virar a carta
     const executeFlip = () => {
         switch (platform) {
             case "AnkiMobile":
@@ -249,11 +248,10 @@ function flipToBack() {
         console.log("flipToBack executed on " + platform);
     };
 
-    // Executa flipToBack com ou sem atraso, dependendo da plataforma e da configuração
     if (shouldFlip) {
         if (platform === "AnkiMobile") {
-            // Para AnkiMobile, aplica um atraso para garantir a compatibilidade com gestos de toque
-            setTimeout(executeFlip, 200); // Atraso de 200ms, ajustável conforme necessário
+            // For AnkiMobile, apply a delay to ensure compatibility with touch gestures
+            setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
         } else {
             executeFlip();
         }
@@ -305,8 +303,8 @@ function handleKeyboardShortcuts(event) {
     }
 }
 
-// Ações do Usuário
-// No AnkiMobile (v2.0.88+) e Ankidroid (v2.17.0+), é possível mapear funções JavaScript a gestos ou ações de um gamepad para melhorar a interatividade dos cartões.
+// User Actions
+// In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it's possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
 var userJs1 = revealNextCloze; // User Action 1
 var userJs2 = hideLastCloze;   // User Action 2
 </script>
