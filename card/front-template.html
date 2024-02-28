@@ -1,38 +1,92 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.2.0">
+<script data-name="Cloze Interactive" data-version="v1.3.0">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
 var userSettings = {
-    invertGestures: false,  // Set to 'true' to invert the gestures
-    swipeThreshold: 50,     // Adjust this value to change the swipe sensitivity
-    scrollDuration: 500,    // Scroll duration in milliseconds
+    gesturesEnabled: true,    // Set para "false" para desabilitar gestos no AnkiDesktop e AnkiWeb com telas sensíveis ao toque
+    invertGestures: false,    // Set to "true" to invert the gestures
+    swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
+    scrollDuration: 500,      // Scroll duration in milliseconds
+    flipToBackEnabled: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
     revealNextKeys: ["KeyW", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
-    hideLastKeys: ["KeyQ", "ArrowLeft"]     // Keys to hide the last cloze
+    hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
 };
 
-// Calculates heights of 'fixed'/'sticky' elements (useful for pages like AnkiWeb with header/footer)
+// Detecta onde o script está sendo executado
+function detectAnkiPlatform() {
+    if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
+        return "AnkiMobile";
+    } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
+        return "AnkiWeb";
+    } else if (typeof AnkiDroidJS !== "undefined") {
+        return "AnkiDroid";
+    } else if (typeof pycmd !== "undefined") {
+        return "AnkiDesktop";
+    } else {
+        return "Unknown";
+    }
+}
+
+// Atualiza a configuração de gestos, apenas para AnkiDesktop e AnkiWeb
+function updateGestureSetting() {
+    var platform = detectAnkiPlatform();
+    // AnkiMobile e AnkiDroid são gerenciados por suas próprias configurações de app pelo User Action
+    if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
+        userSettings.gesturesEnabled = false;
+    }
+}
+
+function convertSpanToLink() {
+    const clozeSpans = document.querySelectorAll("span.cloze");
+
+    clozeSpans.forEach((span, i) => {
+        const link = document.createElement("a");
+        
+        for (let attr of span.attributes) {
+            link.setAttribute(attr.name, attr.value);
+        }
+
+        link.setAttribute("href", "#");
+        link.setAttribute("onclick", `revealCloze(${i}); return false;`);
+        link.innerHTML = span.innerHTML;
+        span.parentNode.replaceChild(link, span);
+    });
+}
+
+// Calculates overlay heights to adjust layouts for both AnkiWeb and AnkiMobile, considering fixed/sticky elements and AnkiMobile UI specifics
 function getOverlayHeights() {
     const heights = {
         top: 0,
         bottom: 0
     };
 
-    document.querySelectorAll('*').forEach(el => {
+    // Captura e adiciona a altura de elementos fixos ou sticky
+    document.querySelectorAll("*").forEach(el => {
         const style = window.getComputedStyle(el);
-        if (style.position === 'fixed' || style.position === 'sticky') {
-            const position = parseFloat(style.top) === 0 ? 'top' : 'bottom';
+        if (style.position === "fixed" || style.position === "sticky") {
+            const position = parseFloat(style.top) === 0 ? "top" : "bottom";
             heights[position] += el.offsetHeight;
         }
     });
+
+    // Verifica e adiciona as alturas definidas pelas variáveis CSS apenas no AnkiMobile
+    if (detectAnkiPlatform() === "AnkiMobile" && window.getComputedStyle) {
+        const rootStyle = getComputedStyle(document.documentElement);
+        const topInset = parseInt(rootStyle.getPropertyValue("--top-inset"), 10) || 0;
+        const bottomInset = parseInt(rootStyle.getPropertyValue("--bottom-inset"), 10) || 0;
+        
+        heights.top += topInset;
+        heights.bottom += bottomInset;
+    }
 
     return heights;
 }
 
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
-    const overlayHeights = getOverlayHeights(); // Considers heights of 'fixed'/'sticky' elements
+    const overlayHeights = getOverlayHeights(); // Considers heights of "fixed"/"sticky" elements
 
     return (
         rect.left >= 0 &&
@@ -45,6 +99,8 @@ function isElementInViewport(el) {
 var touchStartX = 0;
 
 function touchHandler(e) {
+    if (!userSettings.gesturesEnabled) return;
+    
     if (e.type === "touchstart") {
         touchStartX = e.touches[0].clientX;
     } else if (e.type === "touchend") {
@@ -70,11 +126,9 @@ var revealed = [];
 var originalClozeHTML = [];
 var revealOrder = [];
 
-if (typeof AnkiDroidJS !== "undefined") {
-    // Required for rendering MathJax, only on AnkiDroid
-    function replaceMathJax(mathjaxString) {
-        return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
-    }
+// Verifica se todos os clozes foram revelados
+function allClozesRevealed() {
+    return revealed.every(el => el);
 }
 
 function revealCloze(i) {
@@ -83,20 +137,16 @@ function revealCloze(i) {
         elements[i].innerHTML = clozes[i];
         revealed[i] = true;
 
-        // Remove the 'interactive' class when the cloze is revealed
-        elements[i].classList.remove('interactive');
+        // Add the class "revealed" to the element
+        elements[i].classList.add("revealed");
 
         // Add the index to revealOrder
         revealOrder.push(i);
 
-        // MathJax will only run if it is defined
         // Render MathJax
-        if (typeof MathJax !== "undefined") {
-            MathJax.typesetPromise([elements[i]]);
-        }
+        MathJax.typesetPromise([elements[i]]);
 
-        const allClozesRevealed = revealed.every((el) => el);
-        if (allClozesRevealed) {
+        if (allClozesRevealed()) {
             flipToBack();
         }
     }
@@ -114,6 +164,11 @@ function revealNextCloze() {
 }
 
 function hideLastCloze() {
+    if (allClozesRevealed()) {
+        console.log("Todos os clozes já estão revelados. Ação de esconder o último cloze não será executada.");
+        return; // Interrompe a execução da função se todos os clozes estão revelados
+    }
+    
     let i = revealOrder.length - 1;
     if (i !== -1) {
         if (!isElementInViewport(elements[revealOrder[i]])) {
@@ -122,8 +177,8 @@ function hideLastCloze() {
             elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
             revealed[revealOrder[i]] = false;
 
-            // Add the 'interactive' class back to the element
-            elements[revealOrder[i]].classList.add('interactive');
+            // Remove the "revealed" class from the element
+            elements[revealOrder[i]].classList.remove("revealed");
 
             // Remove the last element from revealOrder
             revealOrder.pop();
@@ -158,31 +213,56 @@ function smoothScrollTo(element) {
 }
 
 function flipToBack() {
-    // Remove all event listeners to prevent them from being triggered on the back side
-    document.removeEventListener("keydown", handleKeyboardShortcuts);
-    if ("ontouchstart" in window) {
-        window.removeEventListener("touchstart", touchHandler);
-        window.removeEventListener("touchend", touchHandler);
+    const platform = detectAnkiPlatform();
+    let shouldFlip = false; // Assume que não devemos virar a carta inicialmente
+
+    // Verifica a configuração de flipToBackEnabled
+    if (userSettings.flipToBackEnabled === "all") {
+        shouldFlip = true;
+    } else if (userSettings.flipToBackEnabled === "off") {
+        shouldFlip = false;
+    } else if (Array.isArray(userSettings.flipToBackEnabled)) {
+        shouldFlip = userSettings.flipToBackEnabled.includes(platform);
     }
 
-    if (typeof pycmd !== "undefined") {
-        pycmd("ans");
-    } else if (typeof study !== "undefined") {
-        study.drawAnswer();
-    } else if (typeof AnkiDroidJS !== "undefined") {
-        showAnswer();
-    } else if (window.anki && window.sendMessage2) {
-        window.sendMessage2("ankitap", "midCenter");
-    } else { // Added to work on the new AnkiWeb
-        const showAnswerButton = document.querySelector('.btn.btn-primary.btn-lg');
-        if (showAnswerButton) {
-            showAnswerButton.click();
+    // Função para executar a ação de virar a carta
+    const executeFlip = () => {
+        switch (platform) {
+            case "AnkiMobile":
+                window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "topCenter"}));
+                break;
+            case "AnkiWeb":
+                const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
+                if (showAnswerButton) {
+                    showAnswerButton.click();
+                }
+                break;
+            case "AnkiDroid":
+                showAnswer();
+                break;
+            case "AnkiDesktop":
+                pycmd("ans");
+                break;
+            default:
+                console.log("Plataforma não reconhecida para flipToBack.");
+        }
+        console.log("flipToBack executed on " + platform);
+    };
+
+    // Executa flipToBack com ou sem atraso, dependendo da plataforma e da configuração
+    if (shouldFlip) {
+        if (platform === "AnkiMobile") {
+            // Para AnkiMobile, aplica um atraso para garantir a compatibilidade com gestos de toque
+            setTimeout(executeFlip, 200); // Atraso de 200ms, ajustável conforme necessário
+        } else {
+            executeFlip();
         }
     }
-    console.log("flipToBack");
 }
 
 function initialize() {
+    updateGestureSetting();
+    convertSpanToLink();
     elements = document.querySelectorAll(".cloze");
     clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
 
@@ -192,9 +272,6 @@ function initialize() {
     }
 
     elements.forEach((el, i) => {
-        // Add the 'interactive' class to each cloze element during initialization
-        el.classList.add('interactive');
-
         el.addEventListener("click", (e) => {
             revealCloze(i);
         });
@@ -227,4 +304,9 @@ function handleKeyboardShortcuts(event) {
         hideLastCloze();
     }
 }
+
+// Ações do Usuário
+// No AnkiMobile (v2.0.88+) e Ankidroid (v2.17.0+), é possível mapear funções JavaScript a gestos ou ações de um gamepad para melhorar a interatividade dos cartões.
+var userJs1 = revealNextCloze; // User Action 1
+var userJs2 = hideLastCloze;   // User Action 2
 </script>
