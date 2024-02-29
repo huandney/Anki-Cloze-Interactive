@@ -6,7 +6,7 @@
     background-color: white;
 }
 
-/* Styles for Clozes */
+/* Styles for clozes */
 .cloze {
     font-weight: bold;
     color: #7f0101;
@@ -18,12 +18,12 @@ a.cloze {
     text-decoration: none;
 }
 
-/* Styles for Revealed Clozes */
+/* Styles for revealed clozes */
 .cloze.revealed {
     cursor: default;
 }
 
-/* Prevent MathJax Editing on Front Card */
+/* Prevent MathJax editor on front card */
 .cloze {
     position: relative;
     display: inline-block;
