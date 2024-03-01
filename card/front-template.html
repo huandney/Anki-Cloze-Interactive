@@ -265,11 +265,6 @@ function initialize() {
     elements = document.querySelectorAll(".cloze");
     clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
 
-    if (clozes.length != elements.length) {
-        console.error("Inconsistent count of clozes found in original note text and in the card!");
-        return;
-    }
-
     elements.forEach((el, i) => {
         el.addEventListener("click", (e) => {
             revealCloze(i);
