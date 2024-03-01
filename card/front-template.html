@@ -38,6 +38,7 @@ function updateGestureSetting() {
     }
 }
 
+// Converts span to a links for direct cloze activation on touch devices, avoiding gesture conflicts
 function convertSpanToLink() {
     const clozeSpans = document.querySelectorAll("span.cloze");
 
