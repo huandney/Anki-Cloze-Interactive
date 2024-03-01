@@ -283,6 +283,7 @@ if (typeof onUpdateHook !== "undefined") {
     initialize();
 }
 
+// Listen for key presses to trigger keyboard shortcuts.
 document.addEventListener("keydown", handleKeyboardShortcuts, false);
 
 function handleKeyboardShortcuts(event) {
