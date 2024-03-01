@@ -27,7 +27,6 @@ a.cloze {
 .cloze {
     position: relative;
     display: inline-block;
-    vertical-align: middle;
 }
 a.cloze::before {
     content: "";
