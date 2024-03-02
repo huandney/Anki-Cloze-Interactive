@@ -229,7 +229,7 @@ function flipToBack() {
             case "AnkiMobile":
                 // AnkiMobile doesn't have a public JS API for show answers. 
                 // In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
-                window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "topCenter"}));
+                window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "midCenter"}));
                 break;
             case "AnkiWeb":
                 const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
