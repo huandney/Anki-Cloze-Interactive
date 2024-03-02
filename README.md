@@ -46,7 +46,7 @@ There are two ways to install the Cloze Interactive script:
 You can customize the script's behavior by modifying the user settings at the top of the script. Here are the available options:
 
 - `gesturesEnabled`: Enables or disables gestures on AnkiDesktop and AnkiWeb with touch screens.
-- `invertGestures`: Inverts the touch gestures.
+- `invertGestures`: Inverts the touch gestures, only AnkiDesktop and AnkiWeb.
 - `swipeThreshold`: Adjusts the swipe sensitivity.
 - `scrollDuration`: Adjusts the smooth scroll duration.
 - `flipToBackEnabled`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
