@@ -164,8 +164,7 @@ function revealNextCloze() {
 
 function hideLastCloze() {
     if (allClozesRevealed()) {
-        console.log("All clozes are already revealed. The action to hide the last cloze will not be executed.");
-        return; 
+        return;
     }
     
     let i = revealOrder.length - 1;
