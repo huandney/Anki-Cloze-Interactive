@@ -49,7 +49,7 @@ You can customize the script's behavior by modifying the user settings at the to
 - `invertGestures`: Inverts the touch gestures, only AnkiDesktop and AnkiWeb.
 - `swipeThreshold`: Adjusts the swipe sensitivity.
 - `scrollDuration`: Adjusts the smooth scroll duration.
-- `flipToBackEnabled`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
+- `autoFlip`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last revealed cloze.
 
