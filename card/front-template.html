@@ -9,7 +9,7 @@ var userSettings = {
     invertGestures: false,    // Set to "true" to invert the gestures
     swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
     scrollDuration: 500,      // Scroll duration in milliseconds
-    flipToBackEnabled: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
+    autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
     revealNextKeys: ["KeyW", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
     hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
 };
@@ -215,13 +215,13 @@ function flipToBack() {
     const platform = detectAnkiPlatform();
     let shouldFlip = false; // Assumes we shouldn't flip the card initially
 
-    // Checks the flipToBackEnabled configuration
-    if (userSettings.flipToBackEnabled === "all") {
+    // Checks the autoFlip configuration
+    if (userSettings.autoFlip === "all") {
         shouldFlip = true;
-    } else if (userSettings.flipToBackEnabled === "off") {
+    } else if (userSettings.autoFlip === "off") {
         shouldFlip = false;
-    } else if (Array.isArray(userSettings.flipToBackEnabled)) {
-        shouldFlip = userSettings.flipToBackEnabled.includes(platform);
+    } else if (Array.isArray(userSettings.autoFlip)) {
+        shouldFlip = userSettings.autoFlip.includes(platform);
     }
 
     const executeFlip = () => {
