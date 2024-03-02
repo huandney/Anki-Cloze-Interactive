@@ -7,10 +7,10 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 ## Features
 
 - **Individual Cloze Reveal:** No more revealing all clozes at once!
-- **Touch Gestures:** Swipe gestures are supported on touchscreen devices.
+- **Touch Gestures:** Set your preferred gesture using User Action in AnkiDroid/AnkiMobile; swipe gestures are auto-enabled for AnkiWeb and AnkiDesktop with touchscreens.
 - **Keyboard Shortcuts:** Use keyboard shortcuts to reveal or hide clozes.
 - **Auto Scroll:** Enhance your reading experience with a smooth auto scroll to the next cloze.
-- **Flip to Back:** The card is automatically flipped after revealing all the clozes.
+- **Auto Flip:** The card is automatically flipped after revealing all the clozes, if enabled.
 - **MathJax Support:** Include complex mathematical equations in your clozes with MathJax rendering.
 
 ## Installation
