@@ -227,7 +227,8 @@ function flipToBack() {
     const executeFlip = () => {
         switch (platform) {
             case "AnkiMobile":
-                // AnkiMobile doesn't have a public JS API for answers. Use preferences to set gestures like tap on "topCenter," "midCenter," or "bottomCenter" as a workaround
+                // AnkiMobile doesn't have a public JS API for show answers. 
+                // In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
                 window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "topCenter"}));
                 break;
             case "AnkiWeb":
