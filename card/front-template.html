@@ -32,7 +32,7 @@ function detectAnkiPlatform() {
 // Updates the gesture configuration, only for AnkiDesktop and AnkiWeb
 function updateGestureSetting() {
     var platform = detectAnkiPlatform();
-    // AnkiMobile and AnkiDroid are managed by their own app settings through User Action
+    // AnkiMobile and AnkiDroid are managed by their own app settings through User Actions
     if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
         userSettings.gesturesEnabled = false;
     }
