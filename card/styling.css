@@ -23,7 +23,7 @@ a.cloze {
     cursor: default;
 }
 
-/* Prevent MathJax editor on front card */
+/* Prevents gesture conflicts with cloze elements containing MathJax, especially on AnkiDroid */
 .cloze {
     position: relative;
     display: inline-block;
