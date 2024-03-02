@@ -51,12 +51,25 @@ You can customize the script's behavior by modifying the user settings at the to
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last cloze.
 
-:warning: To ensure compatibility with **AnkiDroid**, follow these steps:
+:warning: Os gestos não são automaticamente ativados with **AnkiDroid** and **AnkiMobile**, follow these steps:
 
-1. Open AnkiDroid.
-2. Go to **Settings**.
-3. Navigate to **Advanced**.
-4. Under the **Experimental** section, enable **Use the new backend**.
+<details>
+  <summary><strong>AnkiDroid</strong></summary>
+  
+  1. Go to **Settings**.
+  2. Navigate to **Controls**.
+  3. Under the **User Actions** section, configure a gesture of your choice, **User Action 1** is set to reveal the next cloze, and **User Action 2** is designated to hide the last revealed cloze.
+</details>
+
+<details>
+  <summary><strong>AnkiMobile</strong></summary>
+  
+  1. Go to **Settings**.
+  2. Navigate to **Review**.
+  3. Open **Taps** or **Swipes**.
+  4. In the "WHEN THE QUESTION IS SHOWN" section, select a gesture of your choice and assign **User Action 1** is set to reveal the next cloze and **User Action 2** is designated to hide the last revealed cloze.
+</details>
+
 
 ## Compatibility
 
