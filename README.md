@@ -53,7 +53,10 @@ You can customize the script's behavior by modifying the user settings at the to
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last revealed cloze.
 
-:warning: Gestures are not automatically enabled on AnkiDroid and AnkiMobile; follow these steps:
+> **Note for AnkiMobile users:** To activate `autoFlip`, set tap gestures to show answers in AnkiMobile's settings, choosing from: `"topCenter"`, `"midCenter"`, or `"bottomCenter"`. Then, adjust the `"msg"` parameter in the `flipToBack` function of the script accordingly. This feature is currently functional, but may break in future updates due to AnkiMobile's private API.
+
+### User Actions: Gestures on AnkiDroid and AnkiMobile
+Gestures are not automatically enabled on AnkiDroid and AnkiMobile. Follow these steps:
 
 <details>
   <summary><strong>AnkiDroid</strong></summary>
@@ -80,8 +83,6 @@ This script is compatible with:
 - **AnkiDroid**: Version 2.17.0 or higher.
 - **AnkiWeb**: Compatible.
 - **AnkiMobile**: Tested on version 23.12.1.
-
-> **Compatibility Note for autoFlip with AnkiMobile**: The feature is currently working but may break with future updates due to AnkiMobile's private API.
 
 ## License
 
