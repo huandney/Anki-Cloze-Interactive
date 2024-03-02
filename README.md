@@ -36,7 +36,7 @@ There are two ways to install the Cloze Interactive script:
 ## Usage
 
 - Click a cloze to reveal it.
-- On touchscreen devices, tap a cloze to open it or use swipe gestures (right to reveal, left to hide).
+- On touchscreen devices, tap a cloze to reveal or use gestures (for AnkiDroid/AnkiMobile, configure swipe gestures via User Actions; on AnkiDesktop and AnkiWeb, swipe right to reveal or left to hide clozes).
 - Use keyboard shortcuts to reveal or hide clozes. Default keys: `W` or `→` for the next cloze, and `Q` or `←` to hide a cloze.
 
 > Both gestures and keyboard shortcuts can be customized in the script's user settings.
