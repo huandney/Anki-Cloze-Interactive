@@ -56,7 +56,7 @@ You can customize the script's behavior by modifying the user settings at the to
 :warning: Os gestos não são automaticamente ativados with **AnkiDroid** and **AnkiMobile**, follow these steps:
 
 <details>
-  <summary><strong>AnkiDroid Instructions</strong></summary>
+  <summary><strong>AnkiDroid</strong></summary>
   
   1. Go to **Settings**.
   2. Navigate to **Controls**.
@@ -64,7 +64,7 @@ You can customize the script's behavior by modifying the user settings at the to
 </details>
 
 <details>
-  <summary><strong>AnkiMobile Instructions</strong></summary>
+  <summary><strong>AnkiMobile</strong></summary>
   
   1. Go to **Settings**.
   2. Navigate to **Review** settings.
@@ -76,11 +76,12 @@ You can customize the script's behavior by modifying the user settings at the to
 
 This script is compatible with:
 
-- **Anki Desktop**: version 2.1.55 or higher.
-- **AnkiDroid**: version 2.16.2 or higher (requires experimental backend feature enabled).
-- **AnkiWeb**: compatible.
+- **Anki Desktop**: Version 2.1.55 or higher.
+- **AnkiDroid**: Version 2.17.0 or higher.
+- **AnkiWeb**: Compatible.
+- **AnkiMobile**: Tested on version 23.12.1.
 
-> Compatibility with **AnkiMobile** has not been tested yet. Feedback from AnkiMobile users is welcome!
+> **Compatibility Note for autoFlip with AnkiMobile**: The feature is currently working but may break with future updates due to AnkiMobile's private API.
 
 ## License
 
