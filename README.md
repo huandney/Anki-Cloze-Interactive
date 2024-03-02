@@ -45,31 +45,32 @@ There are two ways to install the Cloze Interactive script:
 
 You can customize the script's behavior by modifying the user settings at the top of the script. Here are the available options:
 
+- `gesturesEnabled`: Enables or disables gestures on AnkiDesktop and AnkiWeb with touch screens.
 - `invertGestures`: Inverts the touch gestures.
 - `swipeThreshold`: Adjusts the swipe sensitivity.
 - `scrollDuration`: Adjusts the smooth scroll duration.
+- `flipToBackEnabled`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
-- `hideLastKeys`: Sets the keys to hide the last cloze.
+- `hideLastKeys`: Sets the keys to hide the last revealed cloze.
 
 :warning: Os gestos não são automaticamente ativados with **AnkiDroid** and **AnkiMobile**, follow these steps:
 
 <details>
-  <summary><strong>AnkiDroid</strong></summary>
+  <summary><strong>AnkiDroid Instructions</strong></summary>
   
   1. Go to **Settings**.
   2. Navigate to **Controls**.
-  3. Under the **User Actions** section, configure a gesture of your choice, **User Action 1** is set to reveal the next cloze, and **User Action 2** is designated to hide the last revealed cloze.
+  3. Under **User Actions**, configure a preferred gesture. Set **User Action 1** to reveal the next cloze and **User Action 2** to hide the last revealed cloze.
 </details>
 
 <details>
-  <summary><strong>AnkiMobile</strong></summary>
+  <summary><strong>AnkiMobile Instructions</strong></summary>
   
   1. Go to **Settings**.
-  2. Navigate to **Review**.
+  2. Navigate to **Review** settings.
   3. Open **Taps** or **Swipes**.
-  4. In the "WHEN THE QUESTION IS SHOWN" section, select a gesture of your choice and assign **User Action 1** is set to reveal the next cloze and **User Action 2** is designated to hide the last revealed cloze.
+  4. Under "WHEN THE QUESTION IS SHOWN", select a preferred gesture and assign **User Action 1** to reveal and **User Action 2** to hide clozes.
 </details>
-
 
 ## Compatibility
 
