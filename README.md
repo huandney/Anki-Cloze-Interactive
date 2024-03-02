@@ -53,7 +53,7 @@ You can customize the script's behavior by modifying the user settings at the to
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last revealed cloze.
 
-:warning: Os gestos não são automaticamente ativados with **AnkiDroid** and **AnkiMobile**, follow these steps:
+:warning:  Os gestos não são automaticamente ativados with **AnkiDroid** and **AnkiMobile**, follow these steps:
 
 <details>
   <summary><strong>AnkiDroid</strong></summary>
