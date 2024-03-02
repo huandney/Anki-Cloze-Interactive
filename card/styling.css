@@ -5,13 +5,36 @@
     color: black;
     background-color: white;
 }
+
+/* Styles for clozes */
 .cloze {
     font-weight: bold;
     color: #7f0101;
 }
-.cloze.interactive {
-    cursor: pointer;
-}
 .nightMode .cloze {
     color: #ffcccb;
+}
+a.cloze {
+    text-decoration: none;
+}
+
+/* Styles for revealed clozes */
+.cloze.revealed {
+    cursor: default;
+}
+
+/* Prevents gesture conflicts with cloze elements containing MathJax, especially on AnkiDroid */
+.cloze {
+    position: relative;
+    display: inline-block;
+}
+a.cloze::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000; /* Ensures it stays above the content to capture clicks */
+    pointer-events: auto; /* Enables pointer events to capture clicks */
 }
