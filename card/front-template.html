@@ -75,10 +75,8 @@ function getOverlayHeights() {
     // Checks and adds the heights defined by CSS variables only in AnkiMobile
     if (detectAnkiPlatform() === "AnkiMobile" && window.getComputedStyle) {
         const rootStyle = getComputedStyle(document.documentElement);
-        const topInset = parseInt(rootStyle.getPropertyValue("--top-inset"), 10) || 0;
         const bottomInset = parseInt(rootStyle.getPropertyValue("--bottom-inset"), 10) || 0;
         
-        heights.top += topInset;
         heights.bottom += bottomInset;
     }
 
