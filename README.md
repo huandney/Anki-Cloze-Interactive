@@ -63,7 +63,8 @@ Gestures are not automatically enabled on AnkiDroid and AnkiMobile. Follow these
   
   1. Go to **Settings**.
   2. Navigate to **Controls**.
-  3. Under **User Actions**, configure a preferred gesture. Set **User Action 1** to reveal the next cloze and **User Action 2** to hide the last revealed cloze.
+  3. Enable gestures.
+  4. Under **User Actions**, configure a preferred gesture. Set **User Action 1** to reveal the next cloze and **User Action 2** to hide the last revealed cloze.
 </details>
 
 <details>
