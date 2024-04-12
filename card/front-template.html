@@ -125,6 +125,7 @@ var revealed = [];
 var originalClozeHTML = [];
 var revealOrder = [];
 
+// In AnkiDroid, fixes the error of some Mathjax not rendering and also autoFlip not working
 if (detectAnkiPlatform() === "AnkiDroid") {
     // Required for rendering MathJax, only on AnkiDroid
     function replaceMathJax(mathjaxString) {
@@ -149,8 +150,11 @@ function revealCloze(i) {
         // Add the index to revealOrder
         revealOrder.push(i);
 
-        // Render MathJax
-        MathJax.typesetPromise([elements[i]]);
+        // Render MathJax, will only run if it is defined
+        // Additional prevention, AnkiDroid error with autoFlip
+        if (typeof MathJax !== "undefined") {
+            MathJax.typesetPromise([elements[i]]);
+        }
 
         if (allClozesRevealed()) {
             flipToBack();
