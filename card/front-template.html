@@ -1,6 +1,6 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.3.0">
+<script data-name="Cloze Interactive" data-version="v1.3.1">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
@@ -125,6 +125,14 @@ var revealed = [];
 var originalClozeHTML = [];
 var revealOrder = [];
 
+// In AnkiDroid, fixes the error of some Mathjax not rendering and also autoFlip not working
+if (detectAnkiPlatform() === "AnkiDroid") {
+    // Required for rendering MathJax, only on AnkiDroid
+    function replaceMathJax(mathjaxString) {
+        return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
+    }
+}
+
 // Checks if all clozes have been revealed
 function allClozesRevealed() {
     return revealed.every(el => el);
@@ -142,8 +150,11 @@ function revealCloze(i) {
         // Add the index to revealOrder
         revealOrder.push(i);
 
-        // Render MathJax
-        MathJax.typesetPromise([elements[i]]);
+        // Render MathJax, will only run if it is defined
+        // Additional prevention, AnkiDroid error with autoFlip
+        if (typeof MathJax !== "undefined") {
+            MathJax.typesetPromise([elements[i]]);
+        }
 
         if (allClozesRevealed()) {
             flipToBack();
