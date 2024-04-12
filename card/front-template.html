@@ -1,6 +1,6 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.3.0">
+<script data-name="Cloze Interactive" data-version="v1.3.1">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
@@ -124,6 +124,13 @@ var clozes;
 var revealed = [];
 var originalClozeHTML = [];
 var revealOrder = [];
+
+if (detectAnkiPlatform() === "AnkiDroid") {
+    // Required for rendering MathJax, only on AnkiDroid
+    function replaceMathJax(mathjaxString) {
+        return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
+    }
+}
 
 // Checks if all clozes have been revealed
 function allClozesRevealed() {
