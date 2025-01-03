@@ -12,6 +12,7 @@ var userSettings = {
     autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
     revealNextKeys: ["KeyW", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
     hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
+    highlightCloze: true // Set to "false" to disable next cloze highlighting
 };
 
 // Detects where the script is being executed
@@ -156,6 +157,9 @@ function revealCloze(i) {
             MathJax.typesetPromise([elements[i]]);
         }
 
+        // Update the highlight of the next cloze
+        highlightCloze();
+
         if (allClozesRevealed()) {
             flipToBack();
         }
@@ -191,8 +195,21 @@ function hideLastCloze() {
 
             // Remove the last element from revealOrder
             revealOrder.pop();
+
+            // Remove a “highlight-cloze” class
+            highlightCloze();
         }
     }
+}
+
+function highlightCloze() {
+    if (!userSettings.highlightCloze) return;
+    
+    const firstUnrevealed = revealed.findIndex(el => !el);
+    
+    elements.forEach((el, i) => 
+        el.classList.toggle('highlight-cloze', i === firstUnrevealed)
+    );
 }
 
 function smoothScrollTo(element) {
@@ -275,15 +292,16 @@ function initialize() {
     clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
 
     elements.forEach((el, i) => {
-        el.addEventListener("click", (e) => {
-            revealCloze(i);
-        });
+        el.addEventListener("click", () => revealCloze(i));
     });
 
     revealed.length = elements.length;
     revealed.fill(false);
     originalClozeHTML.length = elements.length;
     originalClozeHTML.fill("");
+
+    // Highlight the first cloze to be revealed
+    highlightCloze();
 }
 
 if (typeof onUpdateHook !== "undefined") {
