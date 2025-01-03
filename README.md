@@ -12,6 +12,7 @@ This is a script for Anki that enhances the functionality of cloze cards, allowi
 - **Auto Scroll:** Enhance your reading experience with a smooth auto scroll to the next cloze.
 - **Auto Flip:** The card is automatically flipped after revealing all the clozes, if enabled.
 - **MathJax Support:** Include complex mathematical equations in your clozes with MathJax rendering.
+- **Highlight Cloze:** Highlights the next cloze to guide your focus.
 
 ## Installation
 
