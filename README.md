@@ -52,6 +52,7 @@ You can customize the script's behavior by modifying the user settings at the to
 - `autoFlip`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last revealed cloze.
+- `highlightCloze`: This option controls whether the next cloze to be revealed is visually highlighted. If enabled, the cloze will use the styles defined in the `.highlight-cloze` class from your CSS. You can customize these styles to suit your preferences.
 
 > **Note for AnkiMobile users:** To activate `autoFlip`, set tap gestures to show answers in AnkiMobile's settings, choosing from: `"topCenter"`, `"midCenter"`, or `"bottomCenter"`. Then, adjust the `"msg"` parameter in the `flipToBack` function of the script accordingly. This feature is currently functional, but may break in future updates due to AnkiMobile's private API.
 
@@ -82,7 +83,7 @@ This script is compatible with:
 - **Anki Desktop**: Version 2.1.55 or higher.
 - **AnkiDroid**: Version 2.17.0 or higher.
 - **AnkiWeb**: Compatible.
-- **AnkiMobile**: Tested on version 23.12.1.
+- **AnkiMobile**: Tested on version 24.11.
 
 ## License
 
