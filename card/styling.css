@@ -6,10 +6,11 @@
     background-color: white;
 }
 
+/* ==================== CLOZE INTERACTIVE ==================== */
 /* Styles for clozes */
 .cloze {
     font-weight: bold;
-    color: #7f0101;
+    color: #b20101;
 }
 .nightMode .cloze {
     color: #ffcccb;
@@ -21,6 +22,14 @@ a.cloze {
 /* Styles for revealed clozes */
 .cloze.revealed {
     cursor: default;
+}
+
+/* Highlight clozes */
+.highlight-cloze {
+    color: #1d4ed8 !important;
+}
+.nightMode .highlight-cloze {
+    color: lightblue !important;
 }
 
 /* Prevents gesture conflicts with cloze elements containing MathJax, especially on AnkiDroid */
