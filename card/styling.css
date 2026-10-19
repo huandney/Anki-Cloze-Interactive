@@ -7,43 +7,35 @@
 }
 
 /* ==================== CLOZE INTERACTIVE ==================== */
-/* Styles for clozes */
+/* Prevents AnkiDroid from shifting the page vertically when the card is flipped after scrolling to a cloze */
+html, body {
+    overflow-anchor: none;
+}
+
 .cloze {
     font-weight: bold;
-    color: #b20101;
+    color: #9b2c2c;
 }
 .nightMode .cloze {
     color: #ffcccb;
 }
-a.cloze {
-    text-decoration: none;
-}
 
-/* Styles for revealed clozes */
-.cloze.revealed {
-    cursor: default;
-}
-
-/* Highlight clozes */
+/* Next cloze to be revealed (userSettings.highlightCloze) */
 .highlight-cloze {
-    color: #1d4ed8 !important;
-}
-.nightMode .highlight-cloze {
-    color: lightblue !important;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
 }
 
-/* Prevents gesture conflicts with cloze elements containing MathJax, especially on AnkiDroid */
-.cloze {
+/* Hidden clozes on the front are tap targets; z-index keeps them clickable above overlays covering the card, such as drawing canvases (e.g. AnkiDraw, z-index 999) */
+.cloze[data-cloze]:not(.revealed) {
+    cursor: pointer;
+    touch-action: manipulation;
     position: relative;
-    display: inline-block;
+    z-index: 1000;
 }
-a.cloze::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000; /* Ensures it stays above the content to capture clicks */
-    pointer-events: auto; /* Enables pointer events to capture clicks */
+
+/* Taps on content inside a hidden cloze (e.g. MathJax) reach the cloze instead of opening AnkiDroid's editor */
+.cloze[data-cloze]:not(.revealed) * {
+    pointer-events: none;
 }

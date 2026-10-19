@@ -1,334 +1,227 @@
 {{cloze:Text}}
 
-<script data-name="Cloze Interactive" data-version="v1.4.0">
+<script data-name="Cloze Interactive" data-version="v1.5.0">
 // https://github.com/huandney/Anki-Cloze-Interactive/blob/main/card/front-template.html
 
 // User Settings
 var userSettings = {
-    gesturesEnabled: true,    // Set to "false" to disable gestures on AnkiDesktop and AnkiWeb with touch screens
-    invertGestures: false,    // Set to "true" to invert the gestures
-    swipeThreshold: 50,       // Adjust this value to change the swipe sensitivity
-    scrollDuration: 500,      // Scroll duration in milliseconds
-    autoFlip: "all", // "all", "off", ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
+    gesturesEnabled: true,    // Set to "false" to disable swipe gestures on AnkiDesktop and AnkiWeb with touch screens
+    invertGestures: false,    // Set to "true" to invert swipe direction
+    swipeThreshold: 50,       // Adjust this value to change swipe sensitivity (in pixels)
+    autoFlip: "all",          // "all", "off", or an array: ["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]
+    ankiMobileTapZone: "midCenter", // AnkiMobile tap zone mapped to "Show Answer": "top", "mid" or "bottom" + "Left", "Center" or "Right"
     revealNextKeys: ["KeyW", "ArrowRight"], // Keys to reveal the next cloze - for custom keycodes: https://keycode.info/
-    hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last cloze
-    highlightCloze: true // Set to "false" to disable next cloze highlighting
+    hideLastKeys: ["KeyQ", "ArrowLeft"],    // Keys to hide the last revealed cloze
+    highlightCloze: true      // Set to "false" to disable active cloze highlighting
 };
 
-// Detects where the script is being executed
+// Detects the current Anki platform
 function detectAnkiPlatform() {
-    if (window.anki && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cb !== undefined) {
-        return "AnkiMobile";
-    } else if (document.querySelector("span.align-middle") && document.querySelector("span.align-middle").textContent.includes("AnkiWeb")) {
-        return "AnkiWeb";
-    } else if (typeof AnkiDroidJS !== "undefined") {
-        return "AnkiDroid";
-    } else if (typeof pycmd !== "undefined") {
-        return "AnkiDesktop";
-    } else {
-        return "Unknown";
-    }
-}
-
-// Updates the gesture configuration, only for AnkiDesktop and AnkiWeb
-function updateGestureSetting() {
-    var platform = detectAnkiPlatform();
-    // AnkiMobile and AnkiDroid are managed by their own app settings through User Actions
-    if (platform !== "AnkiWeb" && platform !== "AnkiDesktop") {
-        userSettings.gesturesEnabled = false;
-    }
-}
-
-// Converts span to a links for direct cloze activation on touch devices, avoiding gesture conflicts
-function convertSpanToLink() {
-    const clozeSpans = document.querySelectorAll("span.cloze");
-
-    clozeSpans.forEach((span, i) => {
-        const link = document.createElement("a");
-        
-        for (let attr of span.attributes) {
-            link.setAttribute(attr.name, attr.value);
-        }
-
-        link.setAttribute("href", "#");
-        link.setAttribute("onclick", `revealCloze(${i}); return false;`);
-        link.innerHTML = span.innerHTML;
-        span.parentNode.replaceChild(link, span);
-    });
-}
-
-// Calculates overlay heights to adjust layouts for both AnkiWeb and AnkiMobile, considering fixed/sticky elements and AnkiMobile UI specifics
-function getOverlayHeights() {
-    const heights = {
-        top: 0,
-        bottom: 0
-    };
-
-    // Captures and adds the height of fixed or sticky elements
-    document.querySelectorAll("*").forEach(el => {
-        const style = window.getComputedStyle(el);
-        if (style.position === "fixed" || style.position === "sticky") {
-            const position = parseFloat(style.top) === 0 ? "top" : "bottom";
-            heights[position] += el.offsetHeight;
-        }
-    });
-
-    // Checks and adds the heights defined by CSS variables only in AnkiMobile
-    if (detectAnkiPlatform() === "AnkiMobile" && window.getComputedStyle) {
-        const rootStyle = getComputedStyle(document.documentElement);
-        const bottomInset = parseInt(rootStyle.getPropertyValue("--bottom-inset"), 10) || 0;
-        
-        heights.bottom += bottomInset;
-    }
-
-    return heights;
-}
-
-function isElementInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    const overlayHeights = getOverlayHeights(); // Considers heights of "fixed"/"sticky" elements
-
-    return (
-        rect.left >= 0 &&
-        rect.right <= window.innerWidth &&
-        rect.bottom <= (window.innerHeight - overlayHeights.bottom) &&
-        rect.top >= overlayHeights.top
-    );
-}
-
-var touchStartX = 0;
-
-function touchHandler(e) {
-    if (!userSettings.gesturesEnabled) return;
-    
-    if (e.type === "touchstart") {
-        touchStartX = e.touches[0].clientX;
-    } else if (e.type === "touchend") {
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchDeltaX = touchStartX - touchEndX;
-
-        if (touchDeltaX > userSettings.swipeThreshold) {
-            userSettings.invertGestures ? revealNextCloze() : hideLastCloze();
-        } else if (touchDeltaX < -userSettings.swipeThreshold) {
-            userSettings.invertGestures ? hideLastCloze() : revealNextCloze();
-        }
-    }
-}
-
-if ("ontouchstart" in window) {
-    window.addEventListener("touchstart", touchHandler);
-    window.addEventListener("touchend", touchHandler);
-}
-
-var elements;
-var clozes;
-var revealed = [];
-var originalClozeHTML = [];
-var revealOrder = [];
-
-// In AnkiDroid, fixes the error of some Mathjax not rendering and also autoFlip not working
-if (detectAnkiPlatform() === "AnkiDroid") {
-    // Required for rendering MathJax, only on AnkiDroid
-    function replaceMathJax(mathjaxString) {
-        return mathjaxString.replace(/\\\\\\[.+\\\\]/g, "").replace(/\\\\\\(.+\\\\\\)/g, "");
-    }
-}
-
-// Checks if all clozes have been revealed
-function allClozesRevealed() {
-    return revealed.every(el => el);
-}
-
-function revealCloze(i) {
-    if (!revealed[i]) {
-        originalClozeHTML[i] = elements[i].innerHTML;
-        elements[i].innerHTML = clozes[i];
-        revealed[i] = true;
-
-        // Add the class "revealed" to the element
-        elements[i].classList.add("revealed");
-
-        // Add the index to revealOrder
-        revealOrder.push(i);
-
-        // Render MathJax, will only run if it is defined
-        // Additional prevention, AnkiDroid error with autoFlip
-        if (typeof MathJax !== "undefined") {
-            MathJax.typesetPromise([elements[i]]);
-        }
-
-        // Update the highlight of the next cloze
-        highlightCloze();
-
-        if (allClozesRevealed()) {
-            flipToBack();
-        }
-    }
-}
-
-function revealNextCloze() {
-    const firstUnrevealed = revealed.findIndex((el) => !el);
-    if (firstUnrevealed != -1) {
-        if (!isElementInViewport(elements[firstUnrevealed])) {
-            smoothScrollTo(elements[firstUnrevealed]);
-        } else {
-            revealCloze(firstUnrevealed);
-        }
-    }
-}
-
-function hideLastCloze() {
-    if (allClozesRevealed()) {
-        return;
-    }
-    
-    let i = revealOrder.length - 1;
-    if (i !== -1) {
-        if (!isElementInViewport(elements[revealOrder[i]])) {
-            smoothScrollTo(elements[revealOrder[i]]);
-        } else {
-            elements[revealOrder[i]].innerHTML = originalClozeHTML[revealOrder[i]];
-            revealed[revealOrder[i]] = false;
-
-            // Remove the "revealed" class from the element
-            elements[revealOrder[i]].classList.remove("revealed");
-
-            // Remove the last element from revealOrder
-            revealOrder.pop();
-
-            // Remove a “highlight-cloze” class
-            highlightCloze();
-        }
-    }
-}
-
-function highlightCloze() {
-    if (!userSettings.highlightCloze) return;
-    
-    const firstUnrevealed = revealed.findIndex(el => !el);
-    
-    elements.forEach((el, i) => 
-        el.classList.toggle('highlight-cloze', i === firstUnrevealed)
-    );
-}
-
-function smoothScrollTo(element) {
-    const yOffset = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
-    const startTime = performance.now();
-    const duration = userSettings.scrollDuration;
-
-    function animateScroll(currentTime) {
-        const elapsedTime = currentTime - startTime;
-        const easing = easeInOutQuad(elapsedTime, 0, 1, duration);
-
-        window.scrollTo(0, (1 - easing) * window.pageYOffset + easing * yOffset);
-
-        if (elapsedTime < duration) {
-            requestAnimationFrame(animateScroll);
-        }
-    }
-
-    function easeInOutQuad(t, b, c, d) {
-        t /= d / 2;
-        if (t < 1) return (c / 2) * t * t + b;
-        t--;
-        return (-c / 2) * (t * (t - 2) - 1) + b;
-    }
-
-    requestAnimationFrame(animateScroll);
-}
-
-function flipToBack() {
-    const platform = detectAnkiPlatform();
-    let shouldFlip = false; // Assumes we shouldn't flip the card initially
-
-    // Checks the autoFlip configuration
-    if (userSettings.autoFlip === "all") {
-        shouldFlip = true;
-    } else if (userSettings.autoFlip === "off") {
-        shouldFlip = false;
-    } else if (Array.isArray(userSettings.autoFlip)) {
-        shouldFlip = userSettings.autoFlip.includes(platform);
-    }
-
-    const executeFlip = () => {
-        switch (platform) {
-            case "AnkiMobile":
-                // AnkiMobile doesn't have a public JS API for show answers
-                // In app set "topCenter," "midCenter," or "bottomCenter" as tap gestures to show answers and adjust "msg" bellow accordingly
-                window.webkit.messageHandlers.cb.postMessage(JSON.stringify({scheme: "ankitap", msg: "midCenter"}));
-                break;
-            case "AnkiWeb":
-                const showAnswerButton = document.querySelector(".btn.btn-primary.btn-lg");
-                if (showAnswerButton) {
-                    showAnswerButton.click();
-                }
-                break;
-            case "AnkiDroid":
-                showAnswer();
-                break;
-            case "AnkiDesktop":
-                pycmd("ans");
-                break;
-            default:
-                console.log("Platform not recognized by flipToBack.");
-        }
-    };
-
-    if (shouldFlip) {
-        if (platform === "AnkiMobile") {
-            // For AnkiMobile, apply a delay to ensure compatibility with touch gestures
-            setTimeout(executeFlip, 200); // Delay of 200ms, adjustable as needed
-        } else {
-            executeFlip();
-        }
-    }
+    if (window.anki && window.webkit?.messageHandlers?.cb !== undefined) return "AnkiMobile";
+    if (typeof AnkiDroidJS !== "undefined" || window.ankiPlatform === "ankidroid") return "AnkiDroid";
+    if (typeof pycmd !== "undefined") return "AnkiDesktop";
+    if (/(^|\.)anki(user|web)\.net$/.test(location.hostname)) return "AnkiWeb";
+    return "Unknown";
 }
 
 function initialize() {
-    updateGestureSetting();
-    convertSpanToLink();
-    elements = document.querySelectorAll(".cloze");
-    clozes = Array.from(elements).map(el => el.getAttribute("data-cloze"));
+    // Anki only renders [data-cloze] on the front side; back side or already-initialized cards are skipped
+    const elements = Array.from(document.querySelectorAll(".cloze[data-cloze]"));
+    if (elements[0]?.dataset.ciReady) return;
 
-    elements.forEach((el, i) => {
-        el.addEventListener("click", () => revealCloze(i));
+    // Cleans up event listeners and user actions from the previous card or when flipping to the back side
+    window._ciAbort?.abort();
+    window.userJs1 = null;
+    window.userJs2 = null;
+    if (!elements.length || document.querySelector(".back, #back")) return;
+
+    elements[0].dataset.ciReady = "true";
+    const { signal } = (window._ciAbort = new AbortController());
+
+    const platform = detectAnkiPlatform();
+    // AnkiMobile and AnkiDroid handle gestures natively via User Actions (userJs1 / userJs2)
+    const gesturesEnabled = userSettings.gesturesEnabled && (platform === "AnkiWeb" || platform === "AnkiDesktop");
+
+    const revealOrder = [];
+    let lastScrolledEl = null;
+
+    // Calculates fixed/sticky UI bar heights (AnkiWeb headers, AnkiMobile bottom inset) while ignoring full-screen canvases (AnkiDraw)
+    function getOverlayHeights() {
+        const heights = { top: 0, bottom: 0 };
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        document.querySelectorAll("header, nav, footer, div").forEach(el => {
+            const style = window.getComputedStyle(el);
+            if (style.position === "fixed" || style.position === "sticky") {
+                const rect = el.getBoundingClientRect();
+                // Ignores full-viewport layers such as drawing canvases or background wrappers
+                if (rect.top <= 0 && rect.bottom >= windowHeight) return;
+                if (rect.top <= 0 && rect.bottom < windowHeight) heights.top = Math.max(heights.top, rect.bottom);
+                if (rect.bottom >= windowHeight && rect.top > 0) heights.bottom = Math.max(heights.bottom, windowHeight - rect.top);
+            }
+        });
+
+        if (platform === "AnkiMobile") {
+            const bottomInset = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--bottom-inset"), 10) || 0;
+            heights.bottom = Math.max(heights.bottom, bottomInset);
+        }
+
+        return heights;
+    }
+
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        const { top, bottom } = getOverlayHeights();
+        return (
+            rect.left >= 0 &&
+            rect.right <= window.innerWidth &&
+            rect.top >= top &&
+            rect.bottom <= window.innerHeight - bottom
+        );
+    }
+
+    function highlightCloze() {
+        if (!userSettings.highlightCloze || elements.length <= 1) return;
+        const nextEl = elements.find(el => !el.classList.contains("revealed"));
+        elements.forEach(el => el.classList.toggle("highlight-cloze", el === nextEl));
+    }
+
+    function flipToBack() {
+        const shouldFlip = userSettings.autoFlip === "all" ||
+            (Array.isArray(userSettings.autoFlip) && userSettings.autoFlip.includes(platform));
+
+        if (!shouldFlip) return;
+
+        // Platform-specific commands to trigger "Show Answer"
+        const flipActions = {
+            // AnkiMobile has no "Show Answer" command for cards; it only accepts simulated taps on a zone mapped in app settings
+            // 200ms delay prevents conflicts with active touch gestures on iOS
+            AnkiMobile: () => setTimeout(() => window.webkit.messageHandlers.cb.postMessage(JSON.stringify({ scheme: "ankitap", msg: userSettings.ankiMobileTapZone })), 200),
+            AnkiWeb:    () => document.querySelector(".btn.btn-primary.btn-lg")?.click(),
+            AnkiDroid:  () => showAnswer(),
+            AnkiDesktop: () => pycmd("ans")
+        };
+
+        flipActions[platform]?.();
+    }
+
+    function revealCloze(el) {
+        if (el.classList.contains("revealed")) return;
+
+        el.dataset.hint = el.innerHTML;
+        el.innerHTML = el.dataset.cloze;
+        el.classList.add("revealed");
+        revealOrder.push(el);
+
+        // Re-renders MathJax inside the newly revealed cloze if present
+        if (typeof MathJax !== "undefined") {
+            MathJax.typesetPromise?.([el]);
+        }
+
+        highlightCloze();
+
+        if (revealOrder.length === elements.length) {
+            flipToBack();
+        }
+    }
+
+    function revealNextCloze() {
+        if (!elements[0].isConnected) return;
+        const nextEl = elements.find(el => !el.classList.contains("revealed"));
+        if (!nextEl) return;
+
+        // Reveals immediately if visible, or if the previous action already scrolled to this element
+        if (isElementInViewport(nextEl) || lastScrolledEl === nextEl) {
+            lastScrolledEl = null;
+            revealCloze(nextEl);
+        } else {
+            lastScrolledEl = nextEl;
+            nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    function hideLastCloze() {
+        if (!elements[0].isConnected || !revealOrder.length) return;
+
+        const lastEl = revealOrder[revealOrder.length - 1];
+        if (isElementInViewport(lastEl) || lastScrolledEl === lastEl) {
+            lastScrolledEl = null;
+            revealOrder.pop();
+            lastEl.innerHTML = lastEl.dataset.hint;
+            lastEl.classList.remove("revealed");
+            highlightCloze();
+        } else {
+            lastScrolledEl = lastEl;
+            lastEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    // Configures direct tap/click activation on clozes without triggering card gestures (AnkiDroid PR #18444 standard)
+    elements.forEach(el => {
+        el.classList.add("tappable");
+        el.addEventListener("click", e => {
+            e.stopPropagation();
+            revealCloze(el);
+        }, { signal });
+        el.addEventListener("touchend", e => e.stopPropagation(), { passive: false, signal });
     });
 
-    revealed.length = elements.length;
-    revealed.fill(false);
-    originalClozeHTML.length = elements.length;
-    originalClozeHTML.fill("");
+    // Registers swipe gestures for AnkiDesktop and AnkiWeb touchscreens
+    if (gesturesEnabled && "ontouchstart" in window) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        window.addEventListener("touchstart", e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true, signal });
 
-    // Highlight the first cloze to be revealed
+        window.addEventListener("touchend", e => {
+            const deltaX = touchStartX - e.changedTouches[0].clientX;
+            const deltaY = touchStartY - e.changedTouches[0].clientY;
+            // Mostly vertical movements are scrolls, not swipes
+            if (Math.abs(deltaX) <= userSettings.swipeThreshold || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+            const isSwipeLeft = deltaX > 0;
+            (isSwipeLeft !== userSettings.invertGestures) ? hideLastCloze() : revealNextCloze();
+        }, { passive: true, signal });
+    }
+
+    // Matches both KeyboardEvent.code (e.g. "KeyW") and KeyboardEvent.key (e.g. "w")
+    const matchesKey = (keys, e) => {
+        const code = e.code || "";
+        const key = (e.key || "").toLowerCase();
+        return keys.some(k => {
+            const lower = k.toLowerCase();
+            return k === code || lower === key || (lower.startsWith("key") && lower.slice(3) === key);
+        });
+    };
+
+    // Registers keyboard shortcuts in capture phase to take precedence over Anki add-ons
+    window.addEventListener("keydown", e => {
+        const t = e.target;
+        if (t && (t.id === "typeans" || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+        // Leaves modified shortcuts (e.g. Alt+ArrowLeft) to the browser and Anki
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+        // AnkiDesktop keeps the same page after flipping; listeners from the front must do nothing on the back
+        if (!elements[0].isConnected) return;
+
+        // Key repeat is swallowed so holding a key does not reveal every cloze at once
+        if (matchesKey(userSettings.revealNextKeys, e)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (!e.repeat) revealNextCloze();
+        } else if (matchesKey(userSettings.hideLastKeys, e)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (!e.repeat) hideLastCloze();
+        }
+    }, { capture: true, signal });
+
+    // Exposes User Actions for AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+)
+    window.userJs1 = revealNextCloze;
+    window.userJs2 = hideLastCloze;
+
     highlightCloze();
 }
 
-if (typeof onUpdateHook !== "undefined") {
-    onUpdateHook.push(initialize);
-} else {
-    initialize();
-}
-
-// Listen for key presses to trigger keyboard shortcuts.
-document.addEventListener("keydown", handleKeyboardShortcuts, false);
-
-function handleKeyboardShortcuts(event) {
-    if (event.defaultPrevented) {
-        return;
-    }
-
-    if (userSettings.revealNextKeys.includes(event.code)) {
-        event.preventDefault();
-        revealNextCloze();
-    } else if (userSettings.hideLastKeys.includes(event.code)) {
-        event.preventDefault();
-        hideLastCloze();
-    }
-}
-
-// User Actions
-// In AnkiMobile (v2.0.88+) and AnkiDroid (v2.17.0+), it's possible to map JavaScript functions to gestures or gamepad actions to enhance card interactivity
-var userJs1 = revealNextCloze; // User Action 1
-var userJs2 = hideLastCloze;   // User Action 2
+initialize();
 </script>
