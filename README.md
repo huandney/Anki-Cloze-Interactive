@@ -27,12 +27,14 @@ There are two ways to install the Cloze Interactive script:
 ### Option 2: Manual Installation
 
 1. Navigate to the [card folder](https://github.com/huandney/Anki-Cloze-Interactive/tree/main/card) in the GitHub repository.
-2. Copy the contents of the `template-front.html` file.
+2. Copy the contents of the `front-template.html` file.
 3. Open your Anki Desktop app. In the main Anki window, go to **Tools → Manage Note Types** and find the Cloze note type where you want to enable the Cloze Interactive script. Proceed by clicking on **Cards** to invoke the card template editor.
 4. Replace your existing front template with the copied content.
-5. Repeat the process for the `styling.css` file, replacing your existing styling.
+5. Repeat the process for the `styling.css` file, replacing your existing styling. If you keep your own styling, copy only the rules under `CLOZE INTERACTIVE`; they are required for tapping clozes on touch devices.
 
 > Please note that these instructions are for the Anki Desktop app. The process may vary slightly for AnkiMobile or AnkiDroid.
+
+> **Using `{{FrontSide}}` on the back template?** Wrap the back template in an element with `class="back"` (e.g. `<div class="back">…</div>`), so the script knows it is on the answer side and stays inactive.
 
 ## Usage
 
@@ -48,14 +50,16 @@ You can customize the script's behavior by modifying the user settings at the to
 
 - `gesturesEnabled`: Enables or disables gestures on AnkiDesktop and AnkiWeb with touch screens.
 - `invertGestures`: Inverts the touch gestures, only AnkiDesktop and AnkiWeb.
-- `swipeThreshold`: Adjusts the swipe sensitivity.
-- `scrollDuration`: Adjusts the smooth scroll duration.
-- `autoFlip`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`.
+- `swipeThreshold`: Adjusts the swipe sensitivity (in pixels). Only mostly horizontal swipes are counted, so vertical scrolling never reveals or hides clozes.
+- `autoFlip`: Controls whether the card automatically flips to the back after all clozes are revealed. Options include `"all"`, `"off"`, or specific platforms like `["AnkiDesktop", "AnkiDroid", "AnkiMobile", "AnkiWeb"]`. When the card does not flip, the last revealed cloze can still be hidden.
+- `ankiMobileTapZone`: The AnkiMobile tap zone used by `autoFlip` (default `"midCenter"`). See the note below.
 - `revealNextKeys`: Sets the keys to reveal the next cloze.
 - `hideLastKeys`: Sets the keys to hide the last revealed cloze.
 - `highlightCloze`: This option controls whether the next cloze to be revealed is visually highlighted. If enabled, the cloze will use the styles defined in the `.highlight-cloze` class from your CSS. You can customize these styles to suit your preferences.
 
-> **Note for AnkiMobile users:** To activate `autoFlip`, set tap gestures to show answers in AnkiMobile's settings, choosing from: `"topCenter"`, `"midCenter"`, or `"bottomCenter"`. Then, adjust the `"msg"` parameter in the `flipToBack` function of the script accordingly. This feature is currently functional, but may break in future updates due to AnkiMobile's private API.
+> **Note for AnkiMobile users:** AnkiMobile offers no command for card scripts to show the answer, so `autoFlip` simulates a tap on a screen zone. In AnkiMobile's settings, map a tap zone to **Show Answer** and set `ankiMobileTapZone` to the same zone. Zone names combine a row (`top`, `mid`, `bottom`) with a column (`Left`, `Center`, `Right`), e.g. `"midCenter"` or `"bottomRight"`. This relies on AnkiMobile's private API and may break in future updates.
+
+> Keyboard shortcuts ignore key combinations with Ctrl, Alt or Cmd, and holding a key down reveals only one cloze.
 
 ### User Actions: Gestures on AnkiDroid and AnkiMobile
 Gestures are not automatically enabled on AnkiDroid and AnkiMobile. Follow these steps:
@@ -85,7 +89,10 @@ This script is compatible with:
 - **Anki Desktop**: Version 2.1.55 or higher.
 - **AnkiDroid**: Version 2.17.0 or higher.
 - **AnkiWeb**: Compatible.
-- **AnkiMobile**: Tested on version 24.11.
+- **AnkiMobile**: Tested on version 25.09.
+- **Overlays and drawing add-ons**: Hidden clozes stay tappable above overlays with a z-index below 1000 (tested with AnkiDraw); revealed clozes can be drawn over.
+
+Clozes carry the `tappable` class, so tapping a cloze reveals it without triggering the app's tap gestures. AnkiMobile honors this class; AnkiDroid honors it only in its new reviewer, available since 2.21.0 ([ankidroid/Anki-Android#14303](https://github.com/ankidroid/Anki-Android/issues/14303)). In AnkiDroid's classic reviewer, tapping a cloze may also trigger the tap gesture assigned to that screen zone.
 
 ## License
 
